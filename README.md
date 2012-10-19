@@ -1,7 +1,8 @@
-spacebrew-processing-examples
+spacebrew-processing-library
 =============================
 
-Spacebrew Processing library and examples
+Spacebrew Processing library
+
 
 Installation
 =============================
@@ -9,6 +10,9 @@ Installation
 * Open Processing
 * Open Examples (File/Examples) and scroll down to Spacebrew
 
+Docs 
+=============================
+* Docs for the Processing library are at http://labatrockwell.github.com/spacebrew-processing-library/
 
 Building
 =============================
