@@ -198,7 +198,7 @@ public class Spacebrew {
       try {
         method = parent.getClass().getMethod(methodName, new Class[]{boolean.class});
       } catch (Exception e){
-        System.err.println("Error: method "+methodName+" doesn't exist in your Applet!");
+        System.err.println("method "+methodName+" doesn't exist in your Applet!");
       }
     } else if ( type == "range" ){
       try {
@@ -291,6 +291,10 @@ public class Spacebrew {
     JSONArray arr = new JSONArray();
     arr.put(nm);
     nameConfig.put("name", arr);
+    if ( bConnected ){
+      wsClient.send(nameConfig.toString());
+      wsClient.send( tConfig.toString() );
+    }
   }
   
   /**

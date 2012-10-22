@@ -237,7 +237,6 @@ public class Spacebrew {
       if ( verbose ) System.out.println("connecting "+url);
       wsClient = new WsClient( this, url );    
       wsClient.connect();
-      bConnected = true;
       updatePubSub();
     }
     catch (Exception e){
@@ -292,6 +291,10 @@ public class Spacebrew {
     JSONArray arr = new JSONArray();
     arr.put(nm);
     nameConfig.put("name", arr);
+    if ( bConnected ){
+      wsClient.send(nameConfig.toString());
+      wsClient.send( tConfig.toString() );
+    }
   }
   
   /**
@@ -378,6 +381,7 @@ public class Spacebrew {
    * Websocket callback (don't call this please!)
    */
   public void onOpen(){
+    bConnected = true;
     if ( verbose ) System.out.println("connection open!");
     // send config
     wsClient.send(nameConfig.toString());
@@ -388,6 +392,7 @@ public class Spacebrew {
    * Websocket callback (don't call this please!)
    */
   public void onClose(){
+    bConnected = false;
     System.out.println("connection closed.");
   }
   
