@@ -63,7 +63,7 @@ public class Spacebrew {
   public  boolean verbose = false;
 
   private PApplet     parent;
-  private Method      onRangeMessageMethod, onStringMessageMethod, onBooleanMessageMethod;
+  private Method      onRangeMessageMethod, onStringMessageMethod, onBooleanMessageMethod, onOtherMessageMethod;
   private WsClient    wsClient;
   private boolean     bConnected = false;
 
@@ -89,20 +89,28 @@ public class Spacebrew {
     try {
       onRangeMessageMethod = parent.getClass().getMethod("onRangeMessage", new Class[]{String.class, int.class});
     } catch (Exception e){
-      System.out.println("no onRangeMessage method implemented");
+      //let's not print these messages, 
+      //they confuse ppl and make them think they are doing something wrong
+      //System.out.println("no onRangeMessage method implemented");
     }
 
     try {
       onStringMessageMethod = parent.getClass().getMethod("onStringMessage", new Class[]{String.class, String.class});
     } catch (Exception e){
-      System.out.println("no onStringMessage method implemented");
+      //System.out.println("no onStringMessage method implemented");
     }
 
     try {
       onBooleanMessageMethod = parent.getClass().getMethod("onBooleanMessage", new Class[]{String.class, boolean.class});
     } catch (Exception e){
-      System.out.println("no onBooleanMessage method implemented");
-    }    
+      //System.out.println("no onBooleanMessage method implemented");
+    }
+
+    try {
+      onOtherMessageMethod = parent.getClass().getMethod("onOtherMessage", new Class[]{String.class, String.class});
+    } catch (Exception e){
+      //System.out.println("no onOtherMessage method implemented");
+    }
   }
   
   /**
@@ -190,7 +198,7 @@ public class Spacebrew {
   public void addSubscribe( String name, String methodName, String type ){
     SpacebrewMessage m = new SpacebrewMessage();
     m.name = name;
-    m.type = type;
+    m.type = type.toLowerCase();
     subscribes.add(m);
 
     Method method = null;
@@ -198,26 +206,32 @@ public class Spacebrew {
       try {
         method = parent.getClass().getMethod(methodName, new Class[]{boolean.class});
       } catch (Exception e){
-        System.err.println("method "+methodName+" doesn't exist in your Applet!");
+        System.err.println("method "+methodName+"(boolean) doesn't exist in your Applet!");
       }
     } else if ( type == "range" ){
       try {
         method = parent.getClass().getMethod(methodName, new Class[]{int.class});
       } catch (Exception e){
-        System.err.println("Error: method "+methodName+" doesn't exist in your Applet!");
+        System.err.println("Error: method "+methodName+"(int) doesn't exist in your Applet!");
       }
     } else if ( type == "string" ){
       try {
         method = parent.getClass().getMethod(methodName, new Class[]{String.class});
       } catch (Exception e){
-        System.err.println("Error: method "+methodName+" doesn't exist in your Applet!");
+        System.err.println("Error: method "+methodName+"(String) doesn't exist in your Applet!");
+      }
+    } else {
+      try{
+        method = parent.getClass().getMethod(methodName, new Class[]{String.class});
+      } catch (Exception e){
+        System.err.println("Error: method " + methodName + "(String) doesn't exist in your Applet!");
       }
     }
 
     if (method != null){
       if ( !callbacks.containsKey(name) ){
         callbacks.put( name, new HashMap<String, Method>());
-      }    
+      }
       callbacks.get(name).put(type, method);      
     }
 
@@ -242,7 +256,7 @@ public class Spacebrew {
     catch (Exception e){
       bConnected = false;
       System.err.println(e.getMessage());
-    }  
+    }
   }
 
   /**
@@ -285,14 +299,7 @@ public class Spacebrew {
     mObj.put("publish", tMs2);    
     tConfig.put("config", mObj);    
     
-    // SETUP NAME MESSAGE
-    JSONObject nm = new JSONObject();
-    nm.put("name", name);
-    JSONArray arr = new JSONArray();
-    arr.put(nm);
-    nameConfig.put("name", arr);
     if ( bConnected ){
-      wsClient.send(nameConfig.toString());
       wsClient.send( tConfig.toString() );
     }
   }
@@ -458,6 +465,19 @@ public class Spacebrew {
         }
       }
     } else {
+      if (method != null){
+        try {
+          method.invoke( parent, m.getString("value"));
+        } catch( Exception e ){
+        }
+      } else if ( onOtherMessageMethod != null ){
+        try {
+          onOtherMessageMethod.invoke( parent, name, m.getString("value"));
+        } catch( Exception e){
+          System.err.println("onOtherMessageMethod invoke failed, disabling :(");
+          onOtherMessageMethod = null;
+        }
+      }
       System.err.println("Received message of unknown type "+type);
     }
   }
