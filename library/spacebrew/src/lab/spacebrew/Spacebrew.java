@@ -63,7 +63,7 @@ public class Spacebrew {
   public  boolean verbose = false;
 
   private PApplet     parent;
-  private Method      onRangeMessageMethod, onStringMessageMethod, onBooleanMessageMethod, onOtherMessageMethod;
+  private Method      onRangeMessageMethod, onStringMessageMethod, onBooleanMessageMethod, onOtherMessageMethod, onOpenMethod, onCloseMethod;
   private WsClient    wsClient;
   private boolean     bConnected = false;
 
@@ -111,6 +111,20 @@ public class Spacebrew {
     } catch (Exception e){
       //System.out.println("no onOtherMessage method implemented");
     }
+
+    try {
+      onOpenMethod = parent.getClass().getMethod("onSbOpen", new Class[]{});
+    } catch (Exception e){
+      // System.out.println("no onSbOpen method implemented");
+    }    
+
+    try {
+      onCloseMethod = parent.getClass().getMethod("onSbClose", new Class[]{});
+    } catch (Exception e){
+      // System.out.println("no onSbClose method implemented");
+    }    
+
+
   }
   
   /**
@@ -383,6 +397,10 @@ public class Spacebrew {
     if ( bConnected ) wsClient.send( sM.toString() );
     else System.err.println("Can't send message, not currently connected!");
   }
+
+  public boolean connected() {
+    return bConnected;  
+  }
   
   /**
    * Websocket callback (don't call this please!)
@@ -393,12 +411,30 @@ public class Spacebrew {
     // send config
     wsClient.send(nameConfig.toString());
     wsClient.send(tConfig.toString());
+
+    if ( onOpenMethod != null ){
+      try {
+        onOpenMethod.invoke( parent );
+      } catch( Exception e ){
+        System.err.println("onOpen invoke failed, disabling :(");
+        onOpenMethod = null;
+      }
+    }
   }
   
   /**
    * Websocket callback (don't call this please!)
    */
   public void onClose(){
+    if ( onCloseMethod != null ){
+      try {
+        onCloseMethod.invoke( parent );
+      } catch( Exception e ){
+        System.err.println("onClose invoke failed, disabling :(");
+        onCloseMethod = null;
+      }
+    }
+
     bConnected = false;
     System.out.println("connection closed.");
   }
