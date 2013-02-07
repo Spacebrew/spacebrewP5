@@ -7,7 +7,7 @@ import spacebrew.*;
 */
 
 
-String server="localhost";
+String server="sandbox.spacebrew.cc";
 String name="processingRangeSlider";
 String description ="This is an example client which has a red slider you can move from left to right.  It sends values in the range of 0 to 1023.  It also listens for 'currentDistance' events and will move the slider to the new place in the range 0 to 1023.";
 import processing.serial.*;

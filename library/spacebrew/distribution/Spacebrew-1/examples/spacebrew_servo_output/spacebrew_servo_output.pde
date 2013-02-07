@@ -1,6 +1,6 @@
 import spacebrew.*;
 
-String server="localhost";
+String server="sandbox.spacebrew.cc";
 String name="servo";
 String description ="This is an example client which sends a range or boolean to a servo.";
 import processing.serial.*;

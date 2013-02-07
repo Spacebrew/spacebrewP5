@@ -1,6 +1,6 @@
 import spacebrew.*;
 
-String server="localhost";
+String server="sandbox.spacebrew.cc";
 String name="givemeabettername";
 String description ="This is an example client which .... It also listens to...";
 

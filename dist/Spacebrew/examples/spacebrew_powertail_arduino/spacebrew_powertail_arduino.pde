@@ -1,6 +1,6 @@
 import spacebrew.*;
 
-String server="localhost";
+String server="sandbox.spacebrew.cc";
 String name="PowerTail_viaProccessing";
 String description ="This is an example client that has a powertail and a light atteched and it turns on the light via the power tail.";
 import processing.serial.*;
