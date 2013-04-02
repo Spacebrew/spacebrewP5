@@ -1,9 +1,9 @@
 /**
- * ##library.name##
- * ##library.sentence##
- * ##library.url##
+ * Spacebrew
+ * Spacebrew is a toolkit for creating interactive spaces.
+ * http://spacebrew.cc
  *
- * Copyright ##copyright## ##author##
+ * Copyright (C) 2012 LAB at Rockwell Group Brett Renfer http://rockwellgroup.com/lab
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@
  * 
  * @author      Brett Renfer
  * @modified    10/19/20120
- * @version     ##library.prettyVersion## (##library.version##)
+ * @version     0.1.1 (1)
  */
 
 package spacebrew;
