@@ -74,7 +74,7 @@ public class WsClient extends WebSocketClient {
         onOpenMethod.invoke( parent );
       } 
       catch( Exception e ) {
-        System.err.println("onMessage invoke failed, disabling :(");
+        System.err.println("onOpen invoke failed, disabling :(");
         onOpenMethod = null;
       }
     }

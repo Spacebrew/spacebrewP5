@@ -22,7 +22,7 @@
  * 
  * @author      Brett Renfer
  * @modified    10/19/20120
- * @version     0.1.1 (1)
+ * @version     0.2.0 (1)
  */
 
 package spacebrew;
@@ -63,7 +63,7 @@ public class Spacebrew {
 	public  boolean verbose = false;
 
 	private PApplet     parent;
-	private Method      onRangeMessageMethod, onStringMessageMethod, onBooleanMessageMethod, onCustomMessageMethod, onOpenMethod, onCloseMethod;
+	private Method      onRangeMessageMethod, onStringMessageMethod, onBooleanMessageMethod, onOtherMessageMethod, onCustomMessageMethod, onOpenMethod, onCloseMethod;
 	private WsClient    wsClient;
 	private boolean     bConnected = false;
 
@@ -107,7 +107,13 @@ public class Spacebrew {
 		}
 
 		try {
-			onCustomMessageMethod = parent.getClass().getMethod("onCustomMessage", new Class[]{String.class, String.class});
+			onOtherMessageMethod = parent.getClass().getMethod("onOtherMessage", new Class[]{String.class, String.class});
+		} catch (Exception e){
+			//System.out.println("no onCustomMessage method implemented");
+		}
+
+		try {
+			onCustomMessageMethod = parent.getClass().getMethod("onCustomMessage", new Class[]{String.class, String.class, String.class});
 		} catch (Exception e){
 			//System.out.println("no onCustomMessage method implemented");
 		}
@@ -125,18 +131,68 @@ public class Spacebrew {
 		}    
 	}
 
-	/**
-	 * Setup a publisher
-	 * @param {String}  name of route
-	 * @param {String}  type of route ("range", "boolean", "string", or custom)
-	 */
-	public void addPublish( String name, String type ){
-		SpacebrewMessage m = new SpacebrewMessage();
-		m.name = name; 
-		m.type = type; 
-		publishes.add(m);
-		if ( bConnected ) updatePubSub();
-	}
+  
+  /**
+   * Setup a Boolean publisher
+   * @param {String}  name of route
+   * @param {Boolean} default starting value
+   */
+  public void addPublish( String name, boolean _default ){
+    SpacebrewMessage m = new SpacebrewMessage();
+    m.name = name; 
+    m.type = "boolean"; 
+    if ( _default){
+      m._default = "true";
+    } else {
+      m._default = "false";
+    }
+    publishes.add(m);
+    if ( bConnected ) updatePubSub();
+  }
+  
+  /**
+   * Setup a Range publisher
+   * @param {String}  name of route
+   * @param {Integer} default starting value
+   */
+  public void addPublish( String name, int _default ){
+    SpacebrewMessage m = new SpacebrewMessage();
+    m.name = name; 
+    m.type = "range"; 
+    m._default = PApplet.str(_default);
+    publishes.add(m);
+    if ( bConnected ) updatePubSub();
+  }
+  
+  /**
+   * Setup a String publisher
+   * @param {String}  name of route
+   * @param {String}  default starting value
+   */
+  public void addPublish( String name, String _default ){
+    SpacebrewMessage m = new SpacebrewMessage();
+    m.name = name; 
+    m.type = "string"; 
+    m._default = _default;
+    publishes.add(m);
+    if ( bConnected ) updatePubSub();
+  }
+  
+  /**
+   * Setup a publisher
+   * @param {String}  name of route
+   * @param {String}  type of route ("range", "boolean", or "string")
+   * @param {String}  default starting value
+   */
+  public void addPublish( String name, String type, String _default ){
+    SpacebrewMessage m = new SpacebrewMessage();
+    m.name = name; 
+    m.type = type; 
+    m._default = _default;
+    publishes.add(m);
+    if ( bConnected ) updatePubSub();
+  }
+
   
 	/**
 	 * Add a subscriber. Note: right now this just adds to the message sent onopen;
@@ -166,24 +222,24 @@ public class Spacebrew {
 		subscribes.add(m);
 
 		Method method = null;
-		if ( type == "boolean" ){
+		if ( type.equals( "boolean" ) ){
 
 			try {
 				method = parent.getClass().getMethod(methodName, new Class[]{boolean.class});
 			} catch (Exception e){
 				System.err.println("method "+methodName+"(boolean) doesn't exist in your Applet!");
 			}
-		} else if ( type == "range" ){
+		} else if ( type.equals( "range" ) ){
 			try {
 				method = parent.getClass().getMethod(methodName, new Class[]{int.class});
 			} catch (Exception e){
-				System.err.println("Error: method "+methodName+"(int) doesn't exist in your Applet!");
+				System.err.println("Error: method " + methodName + "(int) doesn't exist in your Applet!");
 			}
-		} else if ( type == "string" ){
+		} else if ( type.equals( "string" ) ){
 			try {
 				method = parent.getClass().getMethod(methodName, new Class[]{String.class});
 			} catch (Exception e){
-				System.err.println("Error: method "+methodName+"(String) doesn't exist in your Applet!");
+				System.err.println("Error: method " + methodName + "(String) doesn't exist in your Applet!");
 			}
 		} else {
 			try{
@@ -210,7 +266,21 @@ public class Spacebrew {
 	 * @param {String} What does your app do?
 	 */
 	public void connect( String hostname, String _name, String _description ){
-		this.connect(hostname, 9000, _name, _description);
+		Integer port = 9000;
+	    String[][] m = PApplet.matchAll(hostname, "ws://((?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(?:\\.(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*):([0-9]{1,5})");
+	    if (m != null) {
+			if (m[0].length == 3) {
+				hostname = m[0][1];
+				port = Integer.parseInt(m[0][2]);
+				this.connect(hostname, port, _name, _description);
+				System.err.println("Using a full websockets URL will be deprecated in future versions of the Spacebrew lib.");
+				System.err.println("Pass just the host name or call the connect(host, port, name, description) instead");
+			} else {
+				System.err.println("Spacebrew server URL is not valid.");				
+			}    
+	    } else {
+			this.connect(hostname, port, _name, _description);    	
+	    }
 	}
   
 	/**
@@ -247,8 +317,8 @@ public class Spacebrew {
 		    JSONObject pub = new JSONObject();
 		    pub.put("name",m.name);
 		    pub.put("type",m.type);
-		    // pub.put("default",m._default);
-		    
+	        pub.put("default",m._default);		    
+
 		    publishers.put(pub);      
 		}
 		  
@@ -326,14 +396,14 @@ public class Spacebrew {
 	 */
 	public void send( String messageName, String value ){
 		String type = "string";
-		for (int i=0, len=publishes.size(); i<len; i++){
+		for ( int i = 0, len = publishes.size(); i<len; i++ ){
 			SpacebrewMessage m = publishes.get(i);
-			if (m.name == messageName) { 
+			if ( m.name.equals(messageName) ) { 
 				type = m.type;
 				break;
 			}
 		}
-		this.send(messageName, type, value);
+		this.send( messageName, type, value );
 	}
 
 	public boolean connected() {
@@ -444,12 +514,23 @@ public class Spacebrew {
 					method.invoke( parent, m.getString("value"));
 				} catch( Exception e ){
 				}
-			} else if ( onCustomMessageMethod != null ){
-				try {
-					onCustomMessageMethod.invoke( parent, name, m.getString("value"));
-				} catch( Exception e){
-					System.err.println("onCustomMessageMethod invoke failed, disabling :(");
-					onCustomMessageMethod = null;
+			} else {
+				if ( onCustomMessageMethod != null ){
+					try {
+						onCustomMessageMethod.invoke( parent, name, type, m.getString("value"));
+					} catch( Exception e){
+						System.err.println("onCustomMessageMethod invoke failed, disabling :(");
+						onCustomMessageMethod = null;
+					}
+				}
+				if ( onOtherMessageMethod != null ){
+					try {
+						onOtherMessageMethod.invoke( parent, name, type, m.getString("value"));
+						System.err.println("onOtherMessageMethod will be deprecated in future version of Spacebrew lib");
+					} catch( Exception e){
+						System.err.println("onOtherMessageMethod invoke failed, disabling :(");
+						onOtherMessageMethod = null;
+					}
 				}
 			}
 		}
