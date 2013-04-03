@@ -21,7 +21,7 @@
  * Boston, MA  02111-1307  USA
  * 
  * @author      Brett Renfer
- * @modified    10/19/20120
+ * @modified    04/03/2013 (by Julio Terra)
  * @version     ##library.prettyVersion## (##library.version##)
  */
 
