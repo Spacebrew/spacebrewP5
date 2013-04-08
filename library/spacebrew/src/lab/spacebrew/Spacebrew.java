@@ -132,66 +132,96 @@ public class Spacebrew {
 	}
 
   
-  /**
-   * Setup a Boolean publisher
-   * @param {String}  name of route
-   * @param {Boolean} default starting value
-   */
-  public void addPublish( String name, boolean _default ){
-    SpacebrewMessage m = new SpacebrewMessage();
-    m.name = name; 
-    m.type = "boolean"; 
-    if ( _default){
-      m._default = "true";
-    } else {
-      m._default = "false";
-    }
-    publishes.add(m);
-    if ( bConnected ) updatePubSub();
-  }
+	/**
+	 * Setup a Boolean publisher
+	 * @param {String}  name of route
+	 * @param {Boolean} default starting value
+	 */
+	public void addPublish( String name, boolean _default ){
+		SpacebrewMessage m = new SpacebrewMessage();
+		m.name = name; 
+		m.type = "boolean"; 
+		if ( _default){
+			m._default = "true";
+		} else {
+			m._default = "false";
+		}
+		publishes.add(m);
+		if ( bConnected ) updatePubSub();
+	}
   
-  /**
-   * Setup a Range publisher
-   * @param {String}  name of route
-   * @param {Integer} default starting value
-   */
-  public void addPublish( String name, int _default ){
-    SpacebrewMessage m = new SpacebrewMessage();
-    m.name = name; 
-    m.type = "range"; 
-    m._default = PApplet.str(_default);
-    publishes.add(m);
-    if ( bConnected ) updatePubSub();
-  }
+	/**
+	 * Setup a Range publisher
+	 * @param {String}  name of route
+	 * @param {Integer} default starting value
+	 */
+	public void addPublish( String name, Integer _default ){
+		SpacebrewMessage m = new SpacebrewMessage();
+		m.name = name; 
+		m.type = "range"; 
+		m._default = PApplet.str(_default);
+		publishes.add(m);
+		if ( bConnected ) updatePubSub();
+	}
   
-  /**
-   * Setup a String publisher
-   * @param {String}  name of route
-   * @param {String}  default starting value
-   */
-  public void addPublish( String name, String _default ){
-    SpacebrewMessage m = new SpacebrewMessage();
-    m.name = name; 
-    m.type = "string"; 
-    m._default = _default;
-    publishes.add(m);
-    if ( bConnected ) updatePubSub();
-  }
+	/**
+	 * Setup a String publisher
+	 * @param {String}  name of route
+	 * @param {String}  default starting value
+	 */
+	public void addPublish( String name, String _default ){
+		SpacebrewMessage m = new SpacebrewMessage();
+		m.name = name; 
+		m.type = "string"; 
+		m._default = _default;
+		publishes.add(m);
+		if ( bConnected ) updatePubSub();
+	}
   
-  /**
-   * Setup a publisher
-   * @param {String}  name of route
-   * @param {String}  type of route ("range", "boolean", or "string")
-   * @param {String}  default starting value
-   */
-  public void addPublish( String name, String type, String _default ){
-    SpacebrewMessage m = new SpacebrewMessage();
-    m.name = name; 
-    m.type = type; 
-    m._default = _default;
-    publishes.add(m);
-    if ( bConnected ) updatePubSub();
-  }
+	/**
+	 * Setup a custom or string publisher
+	 * @param {String}  name of route
+	 * @param {String}  type of route ("range", "boolean", or "string")
+	 * @param {String}  default starting value
+	 */
+	public void addPublish( String name, String type, String _default ){
+		SpacebrewMessage m = new SpacebrewMessage();
+		m.name = name; 
+		m.type = type; 
+		m._default = _default;
+		publishes.add(m);
+		if ( bConnected ) updatePubSub();
+	}
+
+	/**
+	 * Setup a custom or boolean publisher
+	 * @param {String}  name of route
+	 * @param {String}  type of route ("range", "boolean", or "string")
+	 * @param {Boolean} default starting value
+	 */
+	public void addPublish( String name, String type, boolean _default ){
+		SpacebrewMessage m = new SpacebrewMessage();
+		m.name = name; 
+		m.type = type; 
+		m._default = PApplet.str(_default);
+		publishes.add(m);
+		if ( bConnected ) updatePubSub();
+	}
+
+	/**
+	 * Setup a custom or integer-based publisher
+	 * @param {String}  name of route
+	 * @param {String}  type of route ("range", "boolean", or "string")
+	 * @param {Boolean} default starting value
+	 */
+	public void addPublish( String name, String type, Integer _default ){
+		SpacebrewMessage m = new SpacebrewMessage();
+		m.name = name; 
+		m.type = type; 
+		m._default = PApplet.str(_default);
+		publishes.add(m);
+		if ( bConnected ) updatePubSub();
+	}
 
   
 	/**
@@ -377,7 +407,15 @@ public class Spacebrew {
 	 * @param {Integer} What you're sending
 	 */
 	public void send( String messageName, int value ){    
-		this.send(messageName, "range", PApplet.str(value));
+		String type = "range";
+		for ( int i = 0, len = publishes.size(); i<len; i++ ){
+			SpacebrewMessage m = publishes.get(i);
+			if ( m.name.equals(messageName) ) { 
+				type = m.type;
+				break;
+			}
+		}
+		this.send(messageName, type, PApplet.str(value));
 	}
   
 	/**
@@ -386,7 +424,15 @@ public class Spacebrew {
 	 * @param {boolean} What you're sending
 	 */
 	public void send( String messageName, boolean value ){
-		this.send(messageName, "boolean", PApplet.str(value));
+		String type = "boolean";
+		for ( int i = 0, len = publishes.size(); i<len; i++ ){
+			SpacebrewMessage m = publishes.get(i);
+			if ( m.name.equals(messageName) ) { 
+				type = m.type;
+				break;
+			}
+		}
+		this.send(messageName, type, PApplet.str(value));
 	}
   
 	/**

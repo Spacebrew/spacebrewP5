@@ -3,7 +3,6 @@ spacebrew-processing-library
 
 Spacebrew Processing library
 
-
 Installation
 =============================
 * Copy dist/Spacebrew to Processing/libraries
