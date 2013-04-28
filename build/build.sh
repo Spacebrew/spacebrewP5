@@ -1,5 +1,5 @@
 BASEDIR=$(cd "$(dirname "$0")"; pwd)
-VERSION_NUMBER=1
+VERSION_NUMBER=2
 
 # Parse options
 if [ ${#} == 1  ] ; then
@@ -10,9 +10,9 @@ cd library/spacebrew/resources
 ant
 cd ../
 ls
-cp distribution/Spacebrew-$VERSION_NUMBER/download/Spacebrew.zip ../../dist/Spacebrew.zip
+cp distribution/spacebrew-$VERSION_NUMBER/download/spacebrew.zip ../../dist/spacebrew.zip
 cd ../../dist
-rm Spacebrew
-mkdir Spacebrew
-unzip Spacebrew.zip -d ./Spacebrew
-rm Spacebrew.zip
+rm spacebrew
+mkdir spacebrew
+unzip spacebrew.zip -d ./spacebrew
+rm spacebrew.zip

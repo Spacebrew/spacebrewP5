@@ -27,7 +27,6 @@
 
 package spacebrew;
 
-
 import processing.core.*;
 
 /**
@@ -62,10 +61,16 @@ public class Spacebrew {
 	 */
 	public  boolean verbose = false;
 
+	private String 		hostname = "sandbox.spacebrew.cc";
+	private Integer		port = 9000;
+
 	private PApplet     parent;
 	private Method      onRangeMessageMethod, onStringMessageMethod, onBooleanMessageMethod, onOtherMessageMethod, onCustomMessageMethod, onOpenMethod, onCloseMethod;
 	private WsClient    wsClient;
-	private boolean     bConnected = false;
+	private boolean     connectionEstablished = false;
+	private boolean     connectionRequested = false;
+	private Integer     reconnectAttempt = 0;
+	private Integer     reconnectInterval = 5000;
 
 	private JSONObject  tConfig = new JSONObject();
 	private JSONObject  nameConfig = new JSONObject();
@@ -81,6 +86,7 @@ public class Spacebrew {
 		subscribes = new ArrayList<SpacebrewMessage>();
 		callbacks = new HashMap<String, HashMap<String, Method>>();
 		parent = _parent; 
+	    parent.registerMethod("pre", this);		
 		setupMethods();   
 	}
   
@@ -147,7 +153,7 @@ public class Spacebrew {
 			m._default = "false";
 		}
 		publishes.add(m);
-		if ( bConnected ) updatePubSub();
+		if ( connectionEstablished ) updatePubSub();
 	}
   
 	/**
@@ -161,7 +167,7 @@ public class Spacebrew {
 		m.type = "range"; 
 		m._default = PApplet.str(_default);
 		publishes.add(m);
-		if ( bConnected ) updatePubSub();
+		if ( connectionEstablished ) updatePubSub();
 	}
   
 	/**
@@ -175,7 +181,7 @@ public class Spacebrew {
 		m.type = "string"; 
 		m._default = _default;
 		publishes.add(m);
-		if ( bConnected ) updatePubSub();
+		if ( connectionEstablished ) updatePubSub();
 	}
   
 	/**
@@ -190,7 +196,7 @@ public class Spacebrew {
 		m.type = type; 
 		m._default = _default;
 		publishes.add(m);
-		if ( bConnected ) updatePubSub();
+		if ( connectionEstablished ) updatePubSub();
 	}
 
 	/**
@@ -205,7 +211,7 @@ public class Spacebrew {
 		m.type = type; 
 		m._default = PApplet.str(_default);
 		publishes.add(m);
-		if ( bConnected ) updatePubSub();
+		if ( connectionEstablished ) updatePubSub();
 	}
 
 	/**
@@ -220,7 +226,7 @@ public class Spacebrew {
 		m.type = type; 
 		m._default = PApplet.str(_default);
 		publishes.add(m);
-		if ( bConnected ) updatePubSub();
+		if ( connectionEstablished ) updatePubSub();
 	}
 
   
@@ -235,7 +241,7 @@ public class Spacebrew {
 		m.name = name;
 		m.type = type;
 		subscribes.add(m);
-		if ( bConnected ) updatePubSub();
+		if ( connectionEstablished ) updatePubSub();
 	}
 
 	/**
@@ -286,7 +292,7 @@ public class Spacebrew {
 			callbacks.get(name).put(type, method);      
 		}
 
-		if ( bConnected ) updatePubSub();
+		if ( connectionEstablished ) updatePubSub();
 	}
   
 	/**
@@ -319,19 +325,46 @@ public class Spacebrew {
 	 * @param {String} Name of your app as it will appear in the Spacebrew admin
 	 * @param {String} What does your app do?
 	 */
-	public void connect( String hostname, Integer _port, String _name, String _description ){
-		name = _name;
-		description = _description;
+	public void connect( String _hostname, Integer _port, String _name, String _description ){
+		this.name = _name;
+		this.description = _description;
+		this.hostname = _hostname;
+		this.port = _port;
+		this.connectionRequested = true;
 		try {
-			if ( verbose ) System.out.println("connecting "+ hostname);
+			if ( verbose ) System.out.println("[connect] connecting to spacebrew "+ hostname);
 			wsClient = new WsClient( this, ("ws://" + hostname + ":" + Integer.toString(_port)) );    
 			wsClient.connect();
 			updatePubSub();
 		}
 		catch (Exception e){
-			bConnected = false;
+			connectionEstablished = false;
 			System.err.println(e.getMessage());
 		}
+	}
+
+	/**
+	 * Method that ensure that app attempts to reconnect to Spacebrew if the connection is lost.
+	 */
+	public void pre() {
+		// attempt to reconnect
+		if (connectionRequested && !connectionEstablished) {
+			if (parent.millis() - reconnectAttempt > reconnectInterval) {
+				if ( verbose ) System.out.println("[pre] attempting to reconnect to Spacebrew");
+				this.connect(this.hostname, this.port, this.name, this.description);
+				reconnectAttempt = parent.millis();
+			}
+		}
+	}
+
+	/**
+	 * Close the connection to spacebrew
+	 */
+	public void close() {
+		if (connectionEstablished) {
+			wsClient.close();
+		}
+		connectionRequested = false;
 	}
 
 	/**
@@ -375,7 +408,7 @@ public class Spacebrew {
 		mObj.put("publish", tMs2);    
 		tConfig.put("config", mObj);    
 
-		if ( bConnected ){
+		if ( connectionEstablished ){
 		  wsClient.send( tConfig.toString() );
 		}
 	}
@@ -397,8 +430,8 @@ public class Spacebrew {
 		JSONObject sM = new JSONObject();
 		sM.put("message", m);
 
-		if ( bConnected ) wsClient.send( sM.toString() );
-		else System.err.println("Can't send message, not currently connected!");
+		if ( connectionEstablished ) wsClient.send( sM.toString() );
+		else System.err.println("[send] can't send message, not currently connected!");
 	}
 
 	/**
@@ -453,15 +486,15 @@ public class Spacebrew {
 	}
 
 	public boolean connected() {
-		return bConnected;  
+		return connectionEstablished;  
 	}
   
 	/**
 	 * Websocket callback (don't call this please!)
 	 */
 	public void onOpen(){
-		bConnected = true;
-		if ( verbose ) System.out.println("connection open!");
+		connectionEstablished = true;
+		if ( verbose ) System.out.println("[onOpen] spacebrew connection open!");
 
 		// send config
 		wsClient.send(tConfig.toString());
@@ -470,7 +503,7 @@ public class Spacebrew {
 			try {
 				onOpenMethod.invoke( parent );
 			} catch( Exception e ){
-				System.err.println("onOpen invoke failed, disabling :(");
+				System.err.println("[onOpen] invoke failed, disabling :(");
 				onOpenMethod = null;
 			}
 		}
@@ -484,13 +517,13 @@ public class Spacebrew {
 			try {
 				onCloseMethod.invoke( parent );
 			} catch( Exception e ){
-				System.err.println("onClose invoke failed, disabling :(");
+				System.err.println("[onClose] invoke failed, disabling :(");
 				onCloseMethod = null;
 			}
 		}
 
-		bConnected = false;
-		System.out.println("connection closed.");
+		connectionEstablished = false;
+		System.out.println("[onClose] spacebrew connection closed.");
 	}
   
 	/**
@@ -522,7 +555,7 @@ public class Spacebrew {
 				try {
 					onStringMessageMethod.invoke( parent, name, m.getString("value"));
 				} catch( Exception e ){
-					System.err.println("onStringMessageMethod invoke failed, disabling :(");
+					System.err.println("[onStringMessageMethod] invoke failed, disabling :(");
 					onStringMessageMethod = null;
 				}
 			}
@@ -536,7 +569,7 @@ public class Spacebrew {
 				try {
 					onBooleanMessageMethod.invoke( parent, name, m.getBoolean("value"));
 				} catch( Exception e ){
-					System.err.println("onBooleanMessageMethod invoke failed, disabling :(");
+					System.err.println("[onBooleanMessageMethod] invoke failed, disabling :(");
 					onBooleanMessageMethod = null;
 				}
 			}
@@ -550,7 +583,7 @@ public class Spacebrew {
 				try {
 					onRangeMessageMethod.invoke( parent, name, m.getInt("value"));
 				} catch( Exception e ){
-					System.err.println("onRangeMessageMethod invoke failed, disabling :(");
+					System.err.println("[onRangeMessageMethod] invoke failed, disabling :(");
 					onRangeMessageMethod = null;
 				}
 			}
@@ -565,16 +598,16 @@ public class Spacebrew {
 					try {
 						onCustomMessageMethod.invoke( parent, name, type, m.getString("value"));
 					} catch( Exception e){
-						System.err.println("onCustomMessageMethod invoke failed, disabling :(");
+						System.err.println("[onCustomMessageMethod] invoke failed, disabling :(");
 						onCustomMessageMethod = null;
 					}
 				}
 				if ( onOtherMessageMethod != null ){
 					try {
 						onOtherMessageMethod.invoke( parent, name, type, m.getString("value"));
-						System.err.println("onOtherMessageMethod will be deprecated in future version of Spacebrew lib");
+						System.err.println("[onOtherMessageMethod] will be deprecated in future version of Spacebrew lib");
 					} catch( Exception e){
-						System.err.println("onOtherMessageMethod invoke failed, disabling :(");
+						System.err.println("[onOtherMessageMethod] invoke failed, disabling :(");
 						onOtherMessageMethod = null;
 					}
 				}

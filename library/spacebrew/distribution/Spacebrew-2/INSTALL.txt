@@ -1,4 +1,4 @@
-How to install library Spacebrew
+How to install library spacebrew
 
 
 Install with the "Add Library..." tool
@@ -26,19 +26,19 @@ By default the following locations are used for your sketchbook folder:
   For Windows users, the sketchbook folder is located inside 
     'My Documents'/Processing.
 
-The folder structure for library Spacebrew should be as follows:
+The folder structure for library spacebrew should be as follows:
 
 Processing
   libraries
-    Spacebrew
+    spacebrew
       examples
       library
-        Spacebrew.jar
+        spacebrew.jar
       reference
       src
                       
 Some folders like "examples" or "src" might be missing. After library 
-Spacebrew has been successfully installed, restart the Processing 
+spacebrew has been successfully installed, restart the Processing 
 application.
 
 
