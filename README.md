@@ -5,7 +5,7 @@ Spacebrew Processing library
 
 Installation
 =============================
-* Copy dist/Spacebrew to Processing/libraries
+* Copy dist/spacebrew to Processing/libraries
 * Open Processing
 * Open Examples (File/Examples) and scroll down to Spacebrew
 
