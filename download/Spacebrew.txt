@@ -2,10 +2,10 @@
 # UTF-8 supported.
 
 # The name of your library as you want it formatted.
-name = Spacebrew
+name = spacebrew
 
 # List of authors. Links can be provided using the syntax [author name](url).
-authorList = [Brett Renfer](http://rockwellgroup.com/lab)
+authorList = [Brett Renfer, Julio Terra](http://rockwellgroup.com/lab)
 
 # A web page for your library, NOT a direct link to where to download it.
 url = http://spacebrew.cc
@@ -42,8 +42,8 @@ paragraph = The Spacebrew Processing library allows you to connect your Sketches
 # compare different versions of the same library, and check if an update is 
 # available. You should think of it as a counter, counting the total number of 
 # releases you've had.
-version = 1  # This must be parsable as an int
+version = 2  # This must be parsable as an int
 
 # The version as the user will see it. If blank, the version attribute will be 
 # used here.
-prettyVersion = 0.1.1  # This is treated as a String
+prettyVersion = 0.3.0  # This is treated as a String

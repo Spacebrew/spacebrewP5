@@ -1,47 +1,52 @@
+/*
+ * Base Example 
+ *
+ *   Sketch that features the basic building blocks of a Spacebrew client app.
+ * 
+ */
+
 import spacebrew.*;
 
 String server="sandbox.spacebrew.cc";
-String name="givemeabettername";
-String description ="This is an example client which .... It also listens to...";
+String name="P5 Base Example";
+String description ="This is an blank example client that publishes .... and also listens to ...";
 
-Spacebrew spacebrewConnection;
+Spacebrew sb;
 
 void setup() {
-  size(600, 400);
-  
-  spacebrewConnection = new Spacebrew( this );
-  
-  // add each thing you publish to
-  // spacebrewConnection.addPublish( "buttonPress", buttonSend ); 
+	size(600, 400);
 
-  // add each thing you subscribe to
-  // spacebrewConnection.addSubscribe( "color", "range" );
-  
-  // connect!
-  spacebrewConnection.connect("ws://"+server+":9000", name, description );
-  
+	// instantiate the sb variable
+	sb = new Spacebrew( this );
+
+	// add each thing you publish to
+	// sb.addPublish( "buttonPress", "boolean", buttonSend ); 
+
+	// add each thing you subscribe to
+	// sb.addSubscribe( "color", "range" );
+
+	// connect to spacebrew
+	sb.connect(server, name, description );
+
 }
 
 void draw() {
-
+	// do whatever you want to do here	
 }
 
-//void mousePressed() {
-//  spacebrewConnection.send( "buttonPress", buttonSend);
-//}
 
 void onRangeMessage( String name, int value ){
-  println("got int message "+name +" : "+ value);
-  //  // check name by using equals
-  //  if (name.equals("color") == true) {
-  //      currentColor = value;
-  //  }
+	println("got range message " + name + " : " + value);
 }
 
 void onBooleanMessage( String name, boolean value ){
-  println("got bool message "+name +" : "+ value);  
+	println("got boolean message " + name + " : " + value);  
 }
 
 void onStringMessage( String name, String value ){
-  println("got string message "+name +" : "+ value);  
+	println("got string message " + name + " : " + value);  
+}
+
+void onCustomMessage( String name, String type, String value ){
+	println("got " + type + " message " + name + " : " + value);  
 }

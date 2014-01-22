@@ -1,68 +1,77 @@
+/*
+ * Button Example
+ *
+ *   Spacebrew library button example that send and receives boolean messages.  
+ * 
+ */
 import spacebrew.*;
 
 String server="sandbox.spacebrew.cc";
-String name="processingButtonP5";
-String description ="This is an example client which has a big red button you can push to send a message. It also listens for color events and will change it's color based on those messages.";
+String name="P5 Button Example";
+String description ="Client that sends and receives boolean messages. Background turns yellow when message received.";
 
-Spacebrew c;
-int numClicks = 0;
-int currentColor = 255;
+Spacebrew sb;
 
-boolean buttonSend = true;
-String currentText = "Hi, Spacebrew!";
+color color_on = color(255, 255, 50);
+color color_off = color(255, 255, 255);
+int currentColor = color_off;
 
 void setup() {
-  frameRate(240);
-  size(600, 400);
-  
-  c = new Spacebrew( this );
+	frameRate(240);
+	size(500, 400);
 
-  // add each thing you publish and subscribe to
-  c.addPublish( "buttonPress", buttonSend ); 
-    
-  c.addSubscribe( "color", "range" );
-  c.addSubscribe( "text", "string" );
-  
-  // connect!
-  c.connect("ws://"+server+":9000", name, description );
+	// instantiate the spacebrewConnection variable
+	sb = new Spacebrew( this );
+
+	// declare your publishers
+	sb.addPublish( "button_pressed", "boolean", true ); 
+
+
+	// declare your subscribers
+	sb.addSubscribe( "change_background", "boolean" );
+
+	// connect to spacebre
+	sb.connect(server, name, description );
 }
 
 void draw() {
-  background( currentColor );
-  fill(50);
-  textAlign(CENTER);
-  textSize(14);
-  text("Click the button to talk to Spacebrew.", width/2, height/2-140);
-  if (mousePressed == true) {
-    fill(135);
-  } else {
-    fill(230);
-  }
-  rectMode(CENTER);
-  rect(width/2,height/2,420,180,28);
-  textSize(50);
-  fill(50);
-  text(currentText, width/2, height/2+15);
+	// set background color
+	background( currentColor );
+
+	// draw button
+	fill(255,0,0);
+	stroke(200,0,0);
+	rectMode(CENTER);
+	ellipse(width/2,height/2,250,250);
+
+	// add text to button
+	fill(230);
+	textAlign(CENTER);
+	textSize(24);
+	if (mousePressed == true) {
+		text("That Feels Good", width/2, height/2 + 12);
+	} else {
+		text("Click Me", width/2, height/2 + 12);
+	}
 }
 
 void mousePressed() {
-  c.send( "buttonPress", buttonSend);
+	// send message to spacebrew
+	sb.send( "button_pressed", true);
 }
 
-void onRangeMessage( String name, int value ){
-  println("got int message "+name +" : "+ value);
-  if (name.equals("color") == true) {
-      currentColor = value/4;
-  }
+void mouseReleased() {
+	// send message to spacebrew
+	sb.send( "button_pressed", false);
 }
 
 void onBooleanMessage( String name, boolean value ){
-  println("got bool message "+name +" : "+ value);  
-}
+	println("got bool message " + name + " : " + value); 
 
-void onStringMessage( String name, String value ){
-  println("got string message "+name +" : "+ value);  
-  if (name.equals("text") == true) {
-     currentText = value; 
-  }
+	// update background color
+	if (value == true) {
+		currentColor = color_on;
+	} else {
+		currentColor = color_off;
+	}
 }
