@@ -588,15 +588,29 @@ public class Spacebrew {
 				}
 			}
 		} else {
+			String value = "";			
+
+			// lets figure out our type... and cast it to a string!
+			Object obj = m.get("value");
+			if(obj instanceof Number){
+				value = parent.str(m.getInt("value"));
+			} else if ( obj instanceof Boolean ){
+				value = parent.str(m.getBoolean("value"));
+			} else if ( obj instanceof JSONArray ){
+				value = m.getJSONArray("value").toString();
+			} else if ( obj instanceof JSONObject ){
+				value = m.getJSONObject("value").toString();
+			}
+
 			if (method != null){
 				try {
-					method.invoke( parent, m.getString("value"));
+					method.invoke( parent, value);
 				} catch( Exception e ){
 				}
 			} else {
 				if ( onCustomMessageMethod != null ){
 					try {
-						onCustomMessageMethod.invoke( parent, name, type, m.getString("value"));
+						onCustomMessageMethod.invoke( parent, name, type, value);
 					} catch( Exception e){
 						System.err.println("[onCustomMessageMethod] invoke failed, disabling :(");
 						onCustomMessageMethod = null;
@@ -604,7 +618,7 @@ public class Spacebrew {
 				}
 				if ( onOtherMessageMethod != null ){
 					try {
-						onOtherMessageMethod.invoke( parent, name, type, m.getString("value"));
+						onOtherMessageMethod.invoke( parent, name, type, value);
 						System.err.println("[onOtherMessageMethod] will be deprecated in future version of Spacebrew lib");
 					} catch( Exception e){
 						System.err.println("[onOtherMessageMethod] invoke failed, disabling :(");
