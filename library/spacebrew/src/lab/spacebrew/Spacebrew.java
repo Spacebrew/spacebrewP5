@@ -600,6 +600,8 @@ public class Spacebrew {
 				value = m.getJSONArray("value").toString();
 			} else if ( obj instanceof JSONObject ){
 				value = m.getJSONObject("value").toString();
+			} else if ( obj instanceof String ){
+				value = m.get("value").toString();
 			}
 
 			if (method != null){
