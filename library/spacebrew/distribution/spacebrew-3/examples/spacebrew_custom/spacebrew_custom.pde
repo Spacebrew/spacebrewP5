@@ -57,7 +57,7 @@ void draw() {
 
 void mouseClicked() {
 	local_dice = (floor(random(6)) + 1);
-	sb.send("roll_the_dice", str(local_dice));
+	sb.send("roll_the_dice", "dice", str(local_dice));
 }
 
 
