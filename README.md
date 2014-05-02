@@ -11,7 +11,7 @@ Installation
 
 Docs 
 =============================
-* Docs for the Processing library are at http://labatrockwell.github.com/spacebrew-processing-library/
+* Docs for the Processing library are at http://spacebrew.github.io/spacebrewP5/
 
 Building
 =============================
