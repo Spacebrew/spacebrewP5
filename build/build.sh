@@ -1,5 +1,5 @@
 BASEDIR=$(cd "$(dirname "$0")"; pwd)
-VERSION_NUMBER=2
+VERSION_NUMBER=4
 
 # Parse options
 if [ ${#} == 1  ] ; then
