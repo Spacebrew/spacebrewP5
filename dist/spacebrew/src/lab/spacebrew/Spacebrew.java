@@ -1,9 +1,9 @@
 /**
- * spacebrew
+ * ${project.prettyName}
  * Spacebrew is a toolkit for creating interactive spaces.
  * http://spacebrew.cc
  *
- * Copyright (C) 2013 Spacebrew Brett Renfer, Julio Terra http://rockwellgroup.com/lab
+ * Copyright (C) 2015 Spacebrew Brett Renfer, Julio Terra http://rockwellgroup.com/lab
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
