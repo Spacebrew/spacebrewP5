@@ -1,8 +1,8 @@
-## How to install ${project.prettyName}
+## How to install spacebrewP5
 
 ### Install with the Contribution Manager
 
-Add contributed Libraries by selecting the menu item _Sketch_ → _Import Library..._ → _Add Library..._ This will open the Contribution Manager, where you can browse for ${project.prettyName}, or any other Library you want to install.
+Add contributed Libraries by selecting the menu item _Sketch_ → _Import Library..._ → _Add Library..._ This will open the Contribution Manager, where you can browse for spacebrewP5, or any other Library you want to install.
 
 Not all available Libraries have been converted to show up in this menu. If a Library isn't there, it will need to be installed manually by following the instructions below.
 
@@ -14,24 +14,24 @@ By default the following locations are used for your sketchbook folder:
   * For Mac users, the sketchbook folder is located inside `~/Documents/Processing` 
   * For Windows users, the sketchbook folder is located inside `My Documents/Processing`
 
-Download ${project.prettyName} from http://spacebrew.cc
+Download spacebrewP5 from http://spacebrew.cc
 
 Unzip and copy the contributed Library's folder into the `libraries` folder in the Processing sketchbook. You will need to create this `libraries` folder if it does not exist.
 
-The folder structure for Library ${project.prettyName} should be as follows:
+The folder structure for Library spacebrewP5 should be as follows:
 
 ```
 Processing
   libraries
-    ${project.prettyName}
+    spacebrewP5
       examples
       library
-        ${project.prettyName}.jar
+        spacebrewP5.jar
       reference
       src
 ```
              
-Some folders like `examples` or `src` might be missing. After Library ${project.prettyName} has been successfully installed, restart the Processing application.
+Some folders like `examples` or `src` might be missing. After Library spacebrewP5 has been successfully installed, restart the Processing application.
 
 ### Troubleshooting
 

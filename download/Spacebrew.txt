@@ -2,7 +2,7 @@
 # UTF-8 supported.
 
 # The name of your Library as you want it formatted.
-name = ${project.prettyName}
+name = spacebrewP5
 
 # List of authors. Links can be provided using the syntax [author name](url).
 authors = [Brett Renfer, Julio Terra](http://rockwellgroup.com/lab)
