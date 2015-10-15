@@ -35,4 +35,4 @@ Some folders like `examples` or `src` might be missing. After Library spacebrewP
 
 ### Troubleshooting
 
-If you're having trouble, have a look at the [Processing Wiki](https://github.com/processing/processing/wiki/How-to-Install-a-Contributed-Library) for more information, or contact the author [Brett Renfer, Julio Terra](http://rockwellgroup.com/lab).
+If you're having trouble, have a look at the [Processing Wiki](https://github.com/processing/processing/wiki/How-to-Install-a-Contributed-Library) for more information, or contact the author [Brett Renfer](http://www.robotconscience.com).
