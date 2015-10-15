@@ -1,9 +1,9 @@
 /**
  * spacebrewP5
- * Spacebrew is a toolkit for creating interactive spaces.
+ * Spacebrew is a toolkit for prototyping interactive spaces.
  * http://spacebrew.cc
  *
- * Copyright (C) 2015 Spacebrew Brett Renfer, Julio Terra http://rockwellgroup.com/lab
+ * Copyright (c) 2015 Spacebrew Brett Renfer http://www.robotconscience.com
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
