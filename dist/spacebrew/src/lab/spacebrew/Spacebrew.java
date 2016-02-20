@@ -1,9 +1,9 @@
 /**
- * ${project.prettyName}
- * Spacebrew is a toolkit for creating interactive spaces.
+ * spacebrewP5
+ * Spacebrew is a toolkit for prototyping interactive spaces.
  * http://spacebrew.cc
  *
- * Copyright (C) 2015 Spacebrew Brett Renfer, Julio Terra http://rockwellgroup.com/lab
+ * Copyright (c) 2016 Spacebrew Brett Renfer http://www.robotconscience.com
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@
  * 
  * @author      Brett Renfer
  * @modified    04/03/2013 (by Julio Terra)
- * @version     0.4.1 (4)
+ * @version     0.4.2 (5)
  */
 
 package spacebrew;
@@ -545,74 +545,100 @@ public class Spacebrew {
 			}
 		}
     
+		// always check what value is coming in as
+		// int type: 	1 == string, 2 == boolean, 3 == range, 
+		// 				4 == custom aka just string
+		
+		int typeOf = 4;
+
+		String valueAsString = "";			
+
+		// lets figure out our type... and cast it to a string!
+		Object obj = m.get("value");
+
+		if(obj instanceof Number){
+			typeOf = 3;
+			valueAsString = parent.str(m.getInt("value"));
+		} else if ( obj instanceof Boolean ){
+			typeOf = 2;
+			valueAsString = parent.str(m.getBoolean("value"));
+		} else if ( obj instanceof JSONArray ){
+			typeOf = 4;
+			valueAsString = m.getJSONArray("value").toString();
+		} else if ( obj instanceof JSONObject ){
+			typeOf = 4;
+			valueAsString = m.getJSONObject("value").toString();
+		} else if ( obj instanceof String ){
+			typeOf = 4;
+			valueAsString = m.get("value").toString();
+		}
+
 		if ( type.equals("string") ){
 			if ( method != null ){
 				try {
-					method.invoke( parent, m.getString("value"));
+					method.invoke( parent, valueAsString );
 				} catch( Exception e ){
 				}
 			} else if ( onStringMessageMethod != null ){
 				try {
-					onStringMessageMethod.invoke( parent, name, m.getString("value"));
+					onStringMessageMethod.invoke( parent, name, valueAsString );
 				} catch( Exception e ){
 					System.err.println("[onStringMessageMethod] invoke failed, disabling :(");
 					onStringMessageMethod = null;
 				}
 			}
-		} else if ( type.equals("boolean")){
+		} else if ( type.equals("boolean")){	
+			boolean valueBool;
+			if ( typeOf == 2){
+				valueBool = m.getBoolean("value");
+			} else {
+				valueBool = Boolean.parseBoolean(valueAsString);
+			}
+
 			if ( method != null ){
 				try {
-					method.invoke( parent, m.getBoolean("value"));
+					method.invoke( parent, valueBool );
 				} catch( Exception e ){
 				}
 			} else if ( onBooleanMessageMethod != null ){
 				try {
-					onBooleanMessageMethod.invoke( parent, name, m.getBoolean("value"));
+					onBooleanMessageMethod.invoke( parent, name, valueBool );
 				} catch( Exception e ){
 					System.err.println("[onBooleanMessageMethod] invoke failed, disabling :(");
 					onBooleanMessageMethod = null;
 				}
 			}
 		} else if ( type.equals("range")){
+			int valueInt;
+			if ( typeOf == 2){
+				valueInt = m.getInt("value");
+			} else {
+				valueInt = Integer.parseInt(valueAsString);
+			}
+
 			if ( method != null ){
 				try {
-					method.invoke( parent, m.getInt("value"));
+					method.invoke( parent, valueInt);
 				} catch( Exception e ){
 				}
 			} else if ( onRangeMessageMethod != null ){
 				try {
-					onRangeMessageMethod.invoke( parent, name, m.getInt("value"));
+					onRangeMessageMethod.invoke( parent, name, valueInt );
 				} catch( Exception e ){
 					System.err.println("[onRangeMessageMethod] invoke failed, disabling :(");
 					onRangeMessageMethod = null;
 				}
 			}
 		} else {
-			String value = "";			
-
-			// lets figure out our type... and cast it to a string!
-			Object obj = m.get("value");
-			if(obj instanceof Number){
-				value = parent.str(m.getInt("value"));
-			} else if ( obj instanceof Boolean ){
-				value = parent.str(m.getBoolean("value"));
-			} else if ( obj instanceof JSONArray ){
-				value = m.getJSONArray("value").toString();
-			} else if ( obj instanceof JSONObject ){
-				value = m.getJSONObject("value").toString();
-			} else if ( obj instanceof String ){
-				value = m.get("value").toString();
-			}
-
 			if (method != null){
 				try {
-					method.invoke( parent, value);
+					method.invoke( parent, valueAsString);
 				} catch( Exception e ){
 				}
 			} else {
 				if ( onCustomMessageMethod != null ){
 					try {
-						onCustomMessageMethod.invoke( parent, name, type, value);
+						onCustomMessageMethod.invoke( parent, name, type, valueAsString);
 					} catch( Exception e){
 						System.err.println("[onCustomMessageMethod] invoke failed, disabling :(");
 						onCustomMessageMethod = null;
@@ -620,7 +646,7 @@ public class Spacebrew {
 				}
 				if ( onOtherMessageMethod != null ){
 					try {
-						onOtherMessageMethod.invoke( parent, name, type, value);
+						onOtherMessageMethod.invoke( parent, name, type, valueAsString);
 						System.err.println("[onOtherMessageMethod] will be deprecated in future version of Spacebrew lib");
 					} catch( Exception e){
 						System.err.println("[onOtherMessageMethod] invoke failed, disabling :(");
