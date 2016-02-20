@@ -20,7 +20,7 @@ void setup() {
 	sb = new Spacebrew( this );
 
 	// add each thing you publish to
-	// sb.addPublish( "buttonPress", "boolean", false ); 
+	// sb.addPublish( "buttonPress", "boolean" ); 
 
 	// add each thing you subscribe to
 	// sb.addSubscribe( "color", "range" );

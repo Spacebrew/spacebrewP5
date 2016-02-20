@@ -137,13 +137,26 @@ public class Spacebrew {
 		}    
 	}
 
+	/**
+	 * Add a publisher route
+	 * @param name Name of your route
+	 * @param type Type: "string", "range", "boolean", or custom (anything)
+	 */
+	public void addPublish( String name, String type ){
+		SpacebrewMessage m = new SpacebrewMessage();
+		m.name = name; 
+		m.type = type;
+		publishes.add(m);
+		
+		if ( connectionEstablished ) updatePubSub();
+	}
   
 	/**
 	 * Setup a Boolean publisher
 	 * @param {String}  name of route
 	 * @param {Boolean} default starting value
 	 */
-	public void addPublish( String name, boolean _default ){
+	public void addBooleanPublish( String name, boolean _default ){
 		SpacebrewMessage m = new SpacebrewMessage();
 		m.name = name; 
 		m.type = "boolean"; 
@@ -161,7 +174,7 @@ public class Spacebrew {
 	 * @param {String}  name of route
 	 * @param {Integer} default starting value
 	 */
-	public void addPublish( String name, Integer _default ){
+	public void addRangePublish( String name, Integer _default ){
 		SpacebrewMessage m = new SpacebrewMessage();
 		m.name = name; 
 		m.type = "range"; 
@@ -175,7 +188,7 @@ public class Spacebrew {
 	 * @param {String}  name of route
 	 * @param {String}  default starting value
 	 */
-	public void addPublish( String name, String _default ){
+	public void addStringPublish( String name, String _default ){
 		SpacebrewMessage m = new SpacebrewMessage();
 		m.name = name; 
 		m.type = "string"; 
@@ -558,10 +571,10 @@ public class Spacebrew {
 
 		if(obj instanceof Number){
 			typeOf = 3;
-			valueAsString = parent.str(m.getInt("value"));
+			valueAsString = PApplet.str(m.getInt("value"));
 		} else if ( obj instanceof Boolean ){
 			typeOf = 2;
-			valueAsString = parent.str(m.getBoolean("value"));
+			valueAsString = PApplet.str(m.getBoolean("value"));
 		} else if ( obj instanceof JSONArray ){
 			typeOf = 4;
 			valueAsString = m.getJSONArray("value").toString();

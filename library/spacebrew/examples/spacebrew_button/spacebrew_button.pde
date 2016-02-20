@@ -24,7 +24,7 @@ void setup() {
 	sb = new Spacebrew( this );
 
 	// declare your publishers
-	sb.addPublish( "button_pressed", "boolean", true ); 
+	sb.addPublish( "button_pressed", "boolean" ); 
 
 
 	// declare your subscribers
