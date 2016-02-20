@@ -28,7 +28,7 @@ void setup() {
 	sb = new Spacebrew( this );
 
 	// declare your publishers
-	sb.addPublish( "listen_to_me", "string", local_string ); 
+	sb.addPublish( "listen_to_me", "string" ); 
 
 	// declare your subscribers
 	sb.addSubscribe( "say_something", "string" );

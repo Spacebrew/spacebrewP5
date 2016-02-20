@@ -27,7 +27,7 @@ void setup() {
 	sb = new Spacebrew( this );
 
 	// declare your publishers
-	sb.addPublish( "roll_the_dice", "dice", local_dice ); 
+	sb.addPublish( "roll_the_dice", "dice" ); 
 
 	// declare your subscribers
 	sb.addSubscribe( "what_did_you_roll?", "dice" );

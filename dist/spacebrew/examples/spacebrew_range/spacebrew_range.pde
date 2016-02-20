@@ -27,7 +27,7 @@ void setup() {
 	sb = new Spacebrew( this );
 
 	// declare your publishers
-	sb.addPublish( "local_slider", "range", local_slider_val ); 
+	sb.addPublish( "local_slider", "range" ); 
 
 	// declare your subscribers
 	sb.addSubscribe( "remote_slider", "range" );

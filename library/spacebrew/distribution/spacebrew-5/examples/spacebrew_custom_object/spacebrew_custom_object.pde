@@ -22,7 +22,7 @@ void setup(){
   
   // add a publisher and subscriber with a custom type, point2d
   // note: at the moment, the type name MUST be in all lowercase!
-  sb.addPublish ("p5Point", "point2d", "{\"x\":0, \"y\":0}");
+  sb.addPublish ("p5Point", "point2d");
   sb.addSubscribe ("p5Point", "point2d");
   sb.connect(server, name, description);
 }
