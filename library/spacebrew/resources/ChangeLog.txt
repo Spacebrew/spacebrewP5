@@ -1,0 +1,7 @@
+2013-04-27 	Julio Terra
+	* version 0.3.0
+	* added reconnect capability if spacebrew server connection is lost
+	* added close method, that enables client to close connection to spacebrew server
+
+
+     

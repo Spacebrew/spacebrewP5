@@ -36,23 +36,3 @@ Some folders like `examples` or `src` might be missing. After Library spacebrewP
 ### Troubleshooting
 
 If you're having trouble, have a look at the [Processing Wiki](https://github.com/processing/processing/wiki/How-to-Install-a-Contributed-Library) for more information, or contact the author [Brett Renfer](http://www.robotconscience.com).
-=======
-spacebrew-processing-library
-=============================
-
-Spacebrew Processing library
-
-Installation
-=============================
-* Copy dist/spacebrew to Processing/libraries
-* Open Processing
-* Open Examples (File/Examples) and scroll down to Spacebrew
-
-Docs 
-=============================
-* Docs for the Processing library are at http://spacebrew.github.io/spacebrewP5/
-
-Building
-=============================
-* cd to this repo
-* bash build/build.sh
